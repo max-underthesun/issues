@@ -1,3 +1,8 @@
+# mix run -e 'Issues.CLI.run(["-h"])'
+# mix run -e 'Issues.CLI.run(["elixir-lang", "elixir"])'
+
+# iex -S mix
+# Issues.CLI.run(["elixir-lang", "elixir"])
 defmodule Issues.CLI do
 
   @default_count 4
@@ -41,6 +46,16 @@ defmodule Issues.CLI do
   end
 
   def process({user, project, _count}) do
+    # { :ok, body } = Issues.GithubIssues.fetch(user, project)
+    # Enum.each(body, &(IO.inspect(&1)))
+    # IO.puts body
     Issues.GithubIssues.fetch(user, project)
+      |> decode_response
+  end
+
+  def decode_response({:ok, body}), do: body
+  def decode_response({:error, error}) do
+    IO.puts "Error fetching from Github: #{error["message"]}"
+    System.halt(2)
   end
 end
