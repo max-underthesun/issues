@@ -9,10 +9,6 @@ defmodule Issues.GithubIssues do
     |> handle_response
   end
 
-  def issues_url(user, project) do
-    "https://api.github.com/repos/#{user}/#{project}/issues"
-  end
-
   def handle_response({:ok, %{body: body, status_code: 200}}) do
     # { :ok, body }
     { :ok, Poison.Parser.parse!(body) }
@@ -21,6 +17,15 @@ defmodule Issues.GithubIssues do
     # { :error, body }
     { :error, Poison.Parser.parse!(body) }
   end
-  # def handle_response(%{status_code: 200, body: body}), do: { :ok, body }
-  # def handle_response(%{status_code: ___, body: body}), do: { :error, body }
+
+  # use a module attribute to fetch the value at compile time
+  @github_url Application.get_env(:issues, :github_url)
+
+  def issues_url(user, project) do
+    "#{@github_url}/repos/#{user}/#{project}/issues"
+  end
+
+  # def issues_url(user, project) do
+  #   "https://api.github.com/repos/#{user}/#{project}/issues"
+  # end
 end
