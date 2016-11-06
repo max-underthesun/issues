@@ -45,17 +45,25 @@ defmodule Issues.CLI do
     System.halt(0)
   end
 
-  def process({user, project, _count}) do
+  def process({user, project, count}) do
     # { :ok, body } = Issues.GithubIssues.fetch(user, project)
     # Enum.each(body, &(IO.inspect(&1)))
     # IO.puts body
     Issues.GithubIssues.fetch(user, project)
       |> decode_response
+      |> sort_into_ascending_order
+      |>  Enum.take(count)
   end
 
   def decode_response({:ok, body}), do: body
   def decode_response({:error, error}) do
     IO.puts "Error fetching from Github: #{error["message"]}"
     System.halt(2)
+  end
+
+  def sort_into_ascending_order(list_of_issues) do
+    Enum.sort list_of_issues, &(&1["created_at"] <= &2["created_at"])
+              # fn i1, i2 -> Map.get(i1, "created_at") <= Map.get(i2, "created_at") end
+              # fn i1, i2 -> i1["created_at"] <= i2["created_at"] end
   end
 end
