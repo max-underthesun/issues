@@ -1,3 +1,5 @@
+# ./issues elixir-lang elixir 5
+
 # mix run -e 'Issues.CLI.run(["-h"])'
 # mix run -e 'Issues.CLI.run(["elixir-lang", "elixir"])'
 
@@ -15,7 +17,8 @@ defmodule Issues.CLI do
 
   @default_count 4
 
-  def run(argv) do
+  # def run(argv) do
+  def main(argv) do
     argv
       |> parse_args
       |> process
